@@ -9,6 +9,7 @@ __pycache__/
 # Data, weights and experiment outputs (large, not versioned)
 data/*
 !data/.gitkeep
+!data/manifest.yaml
 weights/
 third_party/
 *.pth

@@ -23,7 +23,17 @@
 
 ## Дані
 
-`data/` у `.gitignore`: дані не комітимо, архіви `*.zip` теж.
+`data/` у `.gitignore`: дані не комітимо, архіви `*.zip` теж. Виняток — `data/manifest.yaml`.
+
+**Отримання даних — лише через скрипт**, щоб у всієї команди були побайтово однакові файли:
+- `python scripts/download_data.py`: завантаження з Google Drive за `data/manifest.yaml` → розпаковка → перевірка
+  SHA256 кожного файлу.
+- `--from-zip <архів>` — якщо архів уже завантажено вручну.
+- `--verify` — лише перевірка локальних файлів.
+- `--hash <файл>` — SHA256 для нового запису в маніфесті.
+- **Нові дані** (власні відео тощо): файл на спільний Google Drive з доступом «усі, хто має посилання» → запис у
+  `data/manifest.yaml` (id, хеш, `dest`) → коміт маніфесту. Самі файли в git не додаємо.
+- Завантажені архіви кешуються в `data/cache/`.
 
 - `data/train/global_map.png` — мапа 3645×1845, місто з річкою.
 - `data/train/crops/crop_0..49.png` — 50 кадрів по 640×640.
@@ -56,6 +66,7 @@
 
 ```powershell
 $py = "E:\Anaconda\envs\MachineLearning\python.exe"
+& $py scripts/download_data.py                                        # дані за маніфестом + перевірка SHA256
 & $py -m pytest -q                                                    # тести (~20 с)
 & $py scripts/make_synthetic.py --out data/synthetic --frames 120     # синтетичний політ із GT
 & $py scripts/make_synthetic.py --out data/synthetic_map --world data/train/global_map.png --frame-scale 0.25 --frame-size 640x640
